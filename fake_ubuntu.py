@@ -700,6 +700,22 @@ class FakeUbuntuScreensaver:
         self.root.mainloop()
 
 
+def create_bat_script():
+    """Create a bat script to run the screensaver"""
+    bat_content = f'''@echo off
+cd /d "{SCRIPT_DIR}"
+python fake_ubuntu.py
+'''
+    bat_path = os.path.join(SCRIPT_DIR, 'run_screensaver.bat')
+
+    with open(bat_path, 'w', encoding='utf-8') as f:
+        f.write(bat_content)
+
+    print(f"Created: {bat_path}")
+    print("You can copy this file to your desktop for easy access.")
+    return bat_path
+
+
 def main():
     """Main entry point"""
     # Check for command line arguments
@@ -716,6 +732,15 @@ def main():
         elif arg in ['/s', '-s']:
             # Screensaver mode - run fullscreen
             pass
+        elif arg in ['--create-bat', '-b']:
+            # Create bat script
+            create_bat_script()
+            return
+
+    # Auto-create bat script if it doesn't exist
+    bat_path = os.path.join(SCRIPT_DIR, 'run_screensaver.bat')
+    if not os.path.exists(bat_path):
+        create_bat_script()
 
     # Create and run the screensaver
     screensaver = FakeUbuntuScreensaver()
